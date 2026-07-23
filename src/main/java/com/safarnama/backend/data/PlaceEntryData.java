@@ -1,6 +1,8 @@
 package com.safarnama.backend.data;
 
+
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "place_entries")
@@ -10,9 +12,11 @@ public class PlaceEntryData {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private CityData city;
 
     @ManyToOne
+    @JsonIgnore
     private CustomTabData customTab;
 
     private String name;

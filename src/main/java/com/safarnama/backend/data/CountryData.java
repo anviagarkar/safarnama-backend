@@ -3,6 +3,7 @@ package com.safarnama.backend.data;
 import com.safarnama.backend.user.User;
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "countries")
@@ -12,6 +13,7 @@ public class CountryData {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private User owner;
 
     private String name;

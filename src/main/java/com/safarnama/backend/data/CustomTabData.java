@@ -2,6 +2,7 @@ package com.safarnama.backend.data;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "custom_tabs")
@@ -11,6 +12,7 @@ public class CustomTabData {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private CityData city;
 
     private String name;
