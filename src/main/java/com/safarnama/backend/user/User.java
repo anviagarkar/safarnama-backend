@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "app_user")
@@ -15,7 +16,9 @@ public class User {
     private Long id;
 
     private String email;
+    @JsonIgnore
     private String passwordHash;
+    private String name;
 
     public User() {
     }
@@ -32,6 +35,9 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public String getEmail() {
         return email;

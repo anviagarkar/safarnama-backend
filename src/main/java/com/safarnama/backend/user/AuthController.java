@@ -32,6 +32,7 @@ public class AuthController {
 
         String hashed = passwordEncoder.encode(request.getPassword());
         User user = new User(request.getEmail(), hashed);
+        user.setName(request.getName());
         userRepository.save(user);
 
         return ResponseEntity.ok("Signup successful");
@@ -50,6 +51,8 @@ public class AuthController {
     }
     @org.springframework.web.bind.annotation.GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
-        return ResponseEntity.ok("You are logged in as: " + authentication.getName());
+        User user = userRepository.findByEmail(authentication.getName());
+        return ResponseEntity.ok(user);
     }
+
 }
