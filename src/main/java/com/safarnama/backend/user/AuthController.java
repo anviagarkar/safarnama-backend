@@ -3,10 +3,7 @@ package com.safarnama.backend.user;
 import com.safarnama.backend.auth.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 
@@ -49,10 +46,18 @@ public class AuthController {
         String token = jwtService.generateToken(user.getEmail());
         return ResponseEntity.ok(token);
     }
-    @org.springframework.web.bind.annotation.GetMapping("/me")
+
+    @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName());
         return ResponseEntity.ok(user);
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<?> updateProfile(Authentication authentication, @RequestBody UpdateProfileRequest request) {
+        User user = userRepository.findByEmail(authentication.getName());
+        user.setName(request.getName());
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
+    }
 }
