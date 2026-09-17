@@ -5,7 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.safarnama.backend.data.CountryData;
+import java.util.List;
 
 @Entity
 @Table(name = "app_user")
@@ -19,6 +23,10 @@ public class User {
     @JsonIgnore
     private String passwordHash;
     private String name;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CountryData> countries;
 
     public User() {
     }

@@ -60,4 +60,10 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteAccount(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName());
+        userRepository.delete(user);
+        return ResponseEntity.ok("Account deleted");
+    }
 }
