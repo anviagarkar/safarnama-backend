@@ -1,10 +1,12 @@
 package com.safarnama.backend.user;
 
 import com.safarnama.backend.auth.JwtService;
+import com.safarnama.backend.email.EmailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -14,11 +16,15 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PasswordResetTokenRepository resetTokenRepository;
+    private final EmailService emailService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, PasswordResetTokenRepository resetTokenRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.resetTokenRepository = resetTokenRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/signup")
@@ -65,5 +71,36 @@ public class AuthController {
         User user = userRepository.findByEmail(authentication.getName());
         userRepository.delete(user);
         return ResponseEntity.ok("Account deleted");
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail());
+        if (user == null) {
+            return ResponseEntity.ok("If that email exists, a reset code has been sent.");
+        }
+
+        String token = String.valueOf((int) (Math.random() * 900000) + 100000);
+        PasswordResetToken resetToken = new PasswordResetToken(token, user.getEmail(), LocalDateTime.now().plusHours(1));
+        resetTokenRepository.save(resetToken);
+
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
+
+        return ResponseEntity.ok("If that email exists, a reset code has been sent.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        PasswordResetToken resetToken = resetTokenRepository.findByToken(request.getToken());
+
+        if (resetToken == null || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Invalid or expired code");
+        }
+
+        User user = userRepository.findByEmail(resetToken.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        resetTokenRepository.delete(resetToken);
+
+        return ResponseEntity.ok("Password reset successful");
     }
 }
