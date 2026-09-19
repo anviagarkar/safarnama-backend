@@ -74,16 +74,25 @@ public class AuthController {
     }
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        System.out.println("=== FORGOT PASSWORD DEBUG START ===");
+        System.out.println("Email received: [" + request.getEmail() + "]");
+
         User user = userRepository.findByEmail(request.getEmail());
+        System.out.println("User found: " + (user != null));
+
         if (user == null) {
+            System.out.println("=== FORGOT PASSWORD DEBUG END (no user) ===");
             return ResponseEntity.ok("If that email exists, a reset code has been sent.");
         }
 
         String token = String.valueOf((int) (Math.random() * 900000) + 100000);
         PasswordResetToken resetToken = new PasswordResetToken(token, user.getEmail(), LocalDateTime.now().plusHours(1));
         resetTokenRepository.save(resetToken);
+        System.out.println("Reset token saved: " + token);
 
+        System.out.println("Calling emailService.sendPasswordResetEmail now...");
         emailService.sendPasswordResetEmail(user.getEmail(), token);
+        System.out.println("=== FORGOT PASSWORD DEBUG END (email call completed) ===");
 
         return ResponseEntity.ok("If that email exists, a reset code has been sent.");
     }
