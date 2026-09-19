@@ -20,10 +20,6 @@ public class EmailService {
     private String fromEmail;
 
     public void sendPasswordResetEmail(String toEmail, String resetToken) {
-        System.out.println("EmailService: preparing to send to " + toEmail);
-        System.out.println("EmailService: from address = " + fromEmail);
-        System.out.println("EmailService: api key present = " + (apiKey != null && !apiKey.isEmpty()));
-
         Email from = new Email(fromEmail);
         Email to = new Email(toEmail);
         String subject = "Reset your Safarnama password";
@@ -40,14 +36,12 @@ public class EmailService {
             request.setBody(mail.build());
             Response response = sg.api(request);
 
-            System.out.println("EmailService: SendGrid status = " + response.getStatusCode());
-            System.out.println("EmailService: SendGrid body = " + response.getBody());
-
             if (response.getStatusCode() >= 300) {
-                throw new RuntimeException("SendGrid rejected the email: " + response.getStatusCode() + " - " + response.getBody());
+                System.out.println("EmailService: SendGrid rejected email, status = " + response.getStatusCode());
+                throw new RuntimeException("SendGrid rejected the email: " + response.getStatusCode());
             }
         } catch (Exception ex) {
-            System.out.println("EmailService: EXCEPTION occurred: " + ex.getMessage());
+            System.out.println("EmailService: send failed - " + ex.getMessage());
             throw new RuntimeException("Failed to send email", ex);
         }
     }
