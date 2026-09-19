@@ -35,6 +35,13 @@ public class EmailService {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
             Response response = sg.api(request);
+
+            System.out.println("SendGrid status: " + response.getStatusCode());
+            System.out.println("SendGrid body: " + response.getBody());
+
+            if (response.getStatusCode() >= 300) {
+                throw new RuntimeException("SendGrid rejected the email: " + response.getStatusCode() + " - " + response.getBody());
+            }
         } catch (Exception ex) {
             throw new RuntimeException("Failed to send email", ex);
         }
