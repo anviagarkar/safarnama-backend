@@ -35,8 +35,8 @@ public class SyncPayload {
         public String foodType;
         public String locationName;
         public String locationAddress;
-        public double latitude;
-        public double longitude;
+        public Double latitude;
+        public Double longitude;
         public boolean isWishlist;
         public Instant date;
         public String tripName;
