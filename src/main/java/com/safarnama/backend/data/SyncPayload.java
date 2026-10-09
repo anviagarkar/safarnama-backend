@@ -1,9 +1,11 @@
 package com.safarnama.backend.data;
 
+import java.time.Instant;
 import java.util.List;
 
 public class SyncPayload {
     public List<CountryDTO> countries;
+    public List<TripDTO> trips;
 
     public static class CountryDTO {
         public String name;
@@ -33,8 +35,16 @@ public class SyncPayload {
         public String foodType;
         public String locationName;
         public String locationAddress;
-        public Double latitude;
-        public Double longitude;
+        public double latitude;
+        public double longitude;
         public boolean isWishlist;
+        public Instant date;
+        public String tripName;
+    }
+
+    public static class TripDTO {
+        public String name;
+        public Instant startDate;
+        public Instant endDate;
     }
 }
