@@ -6,12 +6,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -81,7 +84,7 @@ public class AuthController {
             return ResponseEntity.ok("If that email exists, a reset code has been sent.");
         }
 
-        String token = String.valueOf((int) (Math.random() * 900000) + 100000);
+        String token = String.valueOf(secureRandom.nextInt(900000) + 100000);
         PasswordResetToken resetToken = new PasswordResetToken(token, user.getEmail(), LocalDateTime.now().plusHours(1));
         resetTokenRepository.save(resetToken);
 
