@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signup", "/auth/login", "/auth/forgot-password", "/auth/reset-password").permitAll()
+                        .requestMatchers("/privacy-policy.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Rate limiter runs before the JWT filter since forgot/reset-password
