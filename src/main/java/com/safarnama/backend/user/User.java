@@ -1,12 +1,6 @@
 package com.safarnama.backend.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.safarnama.backend.data.CountryData;
 import java.util.List;
@@ -23,6 +17,12 @@ public class User {
     @JsonIgnore
     private String passwordHash;
     private String name;
+
+    @Column(unique = true)
+    private String appleUserId;
+
+    @Column(unique = true)
+    private String googleUserId;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -62,4 +62,9 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+    public String getAppleUserId() { return appleUserId; }
+    public void setAppleUserId(String appleUserId) { this.appleUserId = appleUserId; }
+
+    public String getGoogleUserId() { return googleUserId; }
+    public void setGoogleUserId(String googleUserId) { this.googleUserId = googleUserId; }
 }
