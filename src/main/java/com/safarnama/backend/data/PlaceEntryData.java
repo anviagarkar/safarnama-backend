@@ -33,7 +33,18 @@ public class PlaceEntryData {
     private String locationAddress;
     private Double latitude;
     private Double longitude;
+
+    // The live database column is actually named "is_wishlist" (visible in
+    // Hibernate's own error hint when this mapping was missing: "column
+    // e1_0.wishlist does not exist ... perhaps you meant is_wishlist"). Without
+    // this annotation, Hibernate's default naming strategy maps the "wishlist"
+    // field straight to a column called "wishlist", which doesn't exist — any
+    // query touching a user's place entries (push's cascade-delete, pull's
+    // serialization) would throw and the request would fail before a normal
+    // response could be built.
+    @Column(name = "is_wishlist")
     private boolean wishlist;
+
     private Instant date;
 
     public Long getId() { return id; }
